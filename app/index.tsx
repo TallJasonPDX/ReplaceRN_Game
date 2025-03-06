@@ -1,3 +1,7 @@
 
-import App from '../App';
-export default App;
+import React from 'react';
+import '../App';
+
+export default function Page() {
+  return null;
+}

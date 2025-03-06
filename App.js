@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import {
   StyleSheet,
@@ -6,6 +7,7 @@ import {
   Text,
   TouchableOpacity,
   StatusBar,
+  AppRegistry,
 } from "react-native";
 import {
   GestureHandlerRootView,
@@ -23,7 +25,7 @@ import MoveObstacles from "./src/systems/MoveObstacles";
 
 const { width, height } = Dimensions.get("window");
 
-export default function App() {
+function App() {
   const [gameEngine, setGameEngine] = useState(null);
   const [running, setRunning] = useState(true);
   const [score, setScore] = useState(0);
@@ -179,3 +181,8 @@ const styles = StyleSheet.create({
   },
   restartText: { fontSize: 18, fontWeight: "bold", color: "white" },
 });
+
+// Register the app
+AppRegistry.registerComponent('main', () => App);
+
+export default App;
