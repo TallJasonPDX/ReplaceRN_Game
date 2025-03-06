@@ -5,6 +5,10 @@ modules = ["nodejs-20"]
 channel = "stable-24_05"
 
 [[ports]]
+localPort = 3000
+externalPort = 3001
+
+[[ports]]
 localPort = 8081
 externalPort = 80
 
@@ -13,7 +17,7 @@ localPort = 8082
 externalPort = 3000
 
 [workflows]
-runButton = "Run Game"
+runButton = "Run"
 
 [[workflows.workflow]]
 name = "Dev Server"
@@ -62,3 +66,11 @@ author = 37602681
 [[workflows.workflow.tasks]]
 task = "shell.exec"
 args = "npx expo start"
+
+[[workflows.workflow]]
+name = "Run"
+author = 37602681
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "npx expo start --web --port 3000 --lan"
