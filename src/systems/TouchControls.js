@@ -1,31 +1,32 @@
-import { Dimensions } from 'react-native';
-import React from 'react';
-import Bullet from '../components/Bullet';
 
-const { width, height } = Dimensions.get('window');
+import { Dimensions } from 'react-native';
+
+const { width } = Dimensions.get('window');
 
 const TouchControls = (entities, { touches }) => {
-  const syringe = entities.syringe;
-
-  // Handle touches
-  touches.filter(t => t.type === 'move').forEach(t => {
-    // Move syringe left or right
-    syringe.position[0] = t.event.pageX - 20; // Center the syringe under the touch
-
-    // Ensure syringe stays within screen bounds
-    if (syringe.position[0] < 0) syringe.position[0] = 0;
-    if (syringe.position[0] > width - 40) syringe.position[0] = width - 40;
+  // Handle taps for shooting
+  touches.filter(t => t.type === 'press').forEach(t => {
+    if (entities.game && entities.syringe) {
+      const syringePos = entities.syringe.position;
+      
+      // Create a bullet at the syringe position
+      const bulletId = `bullet-${Date.now()}`;
+      entities.game.dispatch({
+        type: 'add-entity',
+        entity: {
+          id: bulletId,
+          position: [syringePos[0] + 20, syringePos[1]], // Center of the syringe
+          renderer: require('../components/Bullet').default
+        }
+      });
+    }
   });
 
-  // Shoot on touch end (implement slingshot mechanic later)
-  touches.filter(t => t.type === 'end').forEach(t => {
-    // Create a new bullet entity
-    const bulletId = `bullet-${Date.now()}`;
-    entities[bulletId] = {
-      position: [syringe.position[0] + 15, syringe.position[1] - 10], // Position at syringe tip
-      speed: 5,
-      renderer: <Bullet />
-    };
+  // Handle movement of the syringe
+  touches.filter(t => t.type === 'move').forEach(t => {
+    if (entities.syringe) {
+      entities.syringe.position[0] = t.event.pageX - 20; // Center syringe on touch point
+    }
   });
 
   return entities;

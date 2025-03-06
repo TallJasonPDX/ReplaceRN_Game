@@ -1,58 +1,51 @@
 
-import React from 'react';
-import Bullet from '../components/Bullet';
 import { Dimensions } from 'react-native';
 
-const { width, height } = Dimensions.get('window');
+const { height } = Dimensions.get('window');
 
-const ShootSystem = (entities, { dispatch, touches }) => {
-  // Get all bullet entities
-  const bullets = Object.keys(entities).filter(key => key.includes('bullet'));
-  const nurses = Object.keys(entities).filter(key => key.includes('nurse'));
-  const obstacles = Object.keys(entities).filter(key => key.includes('obstacle'));
+const ShootSystem = (entities, { time }) => {
+  const bullets = Object.keys(entities).filter(key => key.startsWith('bullet-'));
   
-  // Move each bullet
-  bullets.forEach(bulletKey => {
-    const bullet = entities[bulletKey];
-    
-    // Move the bullet up
-    bullet.position[1] -= bullet.speed;
-    
-    // Check for bullet-nurse collisions
-    nurses.forEach(nurseKey => {
-      const nurse = entities[nurseKey];
-      const hit = (
-        bullet.position[0] >= nurse.position[0] - nurse.size / 2 &&
-        bullet.position[0] <= nurse.position[0] + nurse.size / 2 &&
-        bullet.position[1] <= nurse.position[1] + nurse.size &&
-        bullet.position[1] >= nurse.position[1]
-      );
+  // Move each bullet up the screen
+  bullets.forEach(bulletId => {
+    if (entities[bulletId]) {
+      // Move bullet up
+      entities[bulletId].position[1] -= 10;
       
-      if (hit) {
-        delete entities[bulletKey];
-        delete entities[nurseKey];
-        dispatch({ type: 'score' });
+      // Check if bullet is off screen
+      if (entities[bulletId].position[1] < 0) {
+        delete entities[bulletId];
         return;
       }
-    });
-
-    // Check for bullet-obstacle collisions
-    obstacles.forEach(obstacleKey => {
-      const obs = entities[obstacleKey];
-      if (
-        bullet.position[0] >= obs.position[0] &&
-        bullet.position[0] <= obs.position[0] + obs.width &&
-        bullet.position[1] <= obs.position[1] + obs.height &&
-        bullet.position[1] >= obs.position[1]
-      ) {
-        delete entities[bulletKey];
-        return;
+      
+      // Check for collisions with nurses
+      const nurses = Object.keys(entities).filter(key => key.startsWith('nurse-'));
+      for (let i = 0; i < nurses.length; i++) {
+        const nurse = entities[nurses[i]];
+        if (!nurse) continue;
+        
+        const nursePos = nurse.position;
+        const nurseSize = nurse.size || 20;
+        const bulletPos = entities[bulletId].position;
+        
+        // Simple collision detection
+        if (
+          bulletPos[0] >= nursePos[0] && 
+          bulletPos[0] <= nursePos[0] + nurseSize &&
+          bulletPos[1] >= nursePos[1] && 
+          bulletPos[1] <= nursePos[1] + nurseSize
+        ) {
+          // Collision detected
+          delete entities[bulletId];
+          delete entities[nurses[i]];
+          
+          // Dispatch score event
+          if (entities.game) {
+            entities.game.dispatch({ type: 'score' });
+          }
+          break;
+        }
       }
-    });
-    
-    // Remove bullet if it reaches the top
-    if (bullet.position[1] < 0) {
-      delete entities[bulletKey];
     }
   });
   

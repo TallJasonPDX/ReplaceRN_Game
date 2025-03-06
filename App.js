@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, View, Dimensions, Text, TouchableOpacity, StatusBar } from 'react-native';
+import { StyleSheet, View, Dimensions, Text, TouchableOpacity, StatusBar, SafeAreaView } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { GameEngine } from 'react-native-game-engine';
 
@@ -155,20 +155,30 @@ export default function App() {
 
 const styles = StyleSheet.create({
   container: { 
-    flex: 1 
+    flex: 1,
+    width: '100%',
+    height: '100%'
   },
   game: { 
     flex: 1, 
-    backgroundColor: '#eee' 
+    backgroundColor: '#eee',
+    width: '100%',
+    height: '100%',
+    position: 'relative'
   },
   background: {
-    flex: 1,
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
     backgroundColor: '#e0e0e0'
   },
   scoreContainer: {
     position: 'absolute',
     top: 40,
     right: 20,
+    zIndex: 10
   },
   score: {
     fontSize: 24,
@@ -183,7 +193,8 @@ const styles = StyleSheet.create({
     right: 0,
     backgroundColor: 'rgba(0,0,0,0.7)',
     justifyContent: 'center',
-    alignItems: 'center'
+    alignItems: 'center',
+    zIndex: 20
   },
   gameOver: {
     fontSize: 36,

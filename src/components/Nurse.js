@@ -9,7 +9,8 @@ const styles = StyleSheet.create({
   nurse: {
     position: 'absolute',
     backgroundColor: 'red',
-    borderRadius: 20
+    borderRadius: 20,
+    zIndex: 5
   }
 });
 
