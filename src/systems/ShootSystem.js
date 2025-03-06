@@ -1,7 +1,15 @@
 
-const ShootSystem = (entities, { touches }) => {
+import React from 'react';
+import Bullet from '../components/Bullet';
+import { Dimensions } from 'react-native';
+
+const { width, height } = Dimensions.get('window');
+
+const ShootSystem = (entities, { dispatch, touches }) => {
   // Get all bullet entities
   const bullets = Object.keys(entities).filter(key => key.includes('bullet'));
+  const nurses = Object.keys(entities).filter(key => key.includes('nurse'));
+  const obstacles = Object.keys(entities).filter(key => key.includes('obstacle'));
   
   // Move each bullet
   bullets.forEach(bulletKey => {
@@ -10,25 +18,6 @@ const ShootSystem = (entities, { touches }) => {
     // Move the bullet up
     bullet.position[1] -= bullet.speed;
     
-    // Remove bullet if it reaches the top
-    if (bullet.position[1] < 0) {
-      delete entities[bulletKey];
-    }
-  });
-  
-  return entities;
-};
-
-export default ShootSystem;
-const ShootSystem = (entities, { dispatch }) => {
-  const bullets = Object.keys(entities).filter(key => key.includes('bullet'));
-  const nurses = Object.keys(entities).filter(key => key.includes('nurse'));
-  const obstacles = Object.keys(entities).filter(key => key.includes('obstacle'));
-
-  bullets.forEach(bulletKey => {
-    const bullet = entities[bulletKey];
-    bullet.position[1] -= bullet.speed;
-
     // Check for bullet-nurse collisions
     nurses.forEach(nurseKey => {
       const nurse = entities[nurseKey];
@@ -60,11 +49,13 @@ const ShootSystem = (entities, { dispatch }) => {
         return;
       }
     });
-
-    // Delete bullet if it goes off screen
-    if (bullet.position[1] < 0) delete entities[bulletKey];
+    
+    // Remove bullet if it reaches the top
+    if (bullet.position[1] < 0) {
+      delete entities[bulletKey];
+    }
   });
-
+  
   return entities;
 };
 

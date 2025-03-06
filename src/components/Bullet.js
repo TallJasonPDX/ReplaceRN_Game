@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
 
@@ -13,24 +12,6 @@ const styles = StyleSheet.create({
     height: 10,
     backgroundColor: 'blue',
     borderRadius: 5
-  }
-});
-
-export default Bullet;
-import React from 'react';
-import { View, StyleSheet } from 'react-native';
-
-const Bullet = () => {
-  return <View style={styles.bullet} />;
-};
-
-const styles = StyleSheet.create({
-  bullet: {
-    width: 10,
-    height: 10,
-    backgroundColor: 'blue',
-    borderRadius: 5,
-    position: 'absolute',
   }
 });
 
