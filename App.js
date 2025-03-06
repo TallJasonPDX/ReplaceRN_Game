@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, View, Dimensions, Text, TouchableOpacity } from 'react-native';
+import { StyleSheet, View, Dimensions, Text, TouchableOpacity, StatusBar } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { GameEngine } from 'react-native-game-engine';
 
@@ -124,6 +124,7 @@ export default function App() {
 
   return (
     <GestureHandlerRootView style={styles.container}>
+      <StatusBar hidden />
       <GameEngine
         ref={(ref) => { setGameEngine(ref) }}
         style={styles.game}
