@@ -1,6 +1,3 @@
 
-import { Redirect } from 'expo-router';
-
-export default function Page() {
-  return <Redirect href="/" />;
-}
+import App from '../App';
+export default App;
