@@ -1,0 +1,110 @@
+Build a mobile shooter game using Expo and react-native-game-engine in Replit. The game is a fixed first-person view where the player is at a desk, looking down a hospital hallway. A syringe (the weapon) is anchored at the bottom of the screen, slides left/right with touch, and uses a slingshot-style pull-back-and-release mechanic to shoot vaccine "bullets." Robot nurses approach from double doors at the far end of the hallway, growing larger as they get closer (simulating depth in a 2D engine). Obstacles like hospital beds and moving patients (untargetable) block the nurses’ path, forcing them to shift left/right.
+Setup Instructions
+Start with Expo:
+Use Replit’s Expo starter app as the base (clone it if not already done).
+
+Ensure the project uses Expo SDK 51 (latest stable as of March 2025) by running npx expo install expo@latest.
+Install Dependencies:
+Install react-native-game-engine:
+npm install react-native-game-engine
+Install react-native-gesture-handler for touch controls (sliding and slingshot):
+npx expo install react-native-gesture-handler
+Install expo-dev-client for development builds (since RNGE has native code):
+npx expo install expo-dev-client
+Configure Development Build:
+Run npx expo prebuild to generate ios and android folders, enabling native module support while staying in Expo’s ecosystem.
+
+Update app.json to include:
+json
+{
+  "expo": {
+    "name": "VaccineShooter",
+    "slug": "vaccine-shooter",
+    "version": "1.0.0",
+    "platforms": ["ios", "android"],
+    "assetBundlePatterns": ["**/*"]
+  }
+}
+Project Structure:
+Create these files/folders:
+src/
+components/: For game entities (e.g., Syringe.js, Nurse.js, Bullet.js, Obstacle.js).
+
+systems/: For game logic (e.g., MoveNurses.js, ShootSystem.js, TouchControls.js).
+
+assets/: For sprites (e.g., hallway.png, syringe.png, nurse.png).
+App.js: Main entry point with the GameEngine.
+Replace the default App.js with a basic RNGE setup:
+javascript
+import React from 'react';
+import { StyleSheet, View } from 'react-native';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import GameEngine from 'react-native-game-engine';
+
+export default function App() {
+  return (
+    <GestureHandlerRootView style={styles.container}>
+      <GameEngine
+        entities={{
+          // Initial empty entities; components will be added later
+        }}
+        style={styles.game}
+      />
+    </GestureHandlerRootView>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: { flex: 1 },
+  game: { flex: 1, backgroundColor: '#eee' }
+});
+Initial Features:
+Add a Syringe component in src/components/Syringe.js:
+javascript
+import React from 'react';
+import { View, StyleSheet } from 'react-native';
+
+const Syringe = ({ position }) => (
+  <View style={[styles.syringe, { left: position[0] }]} />
+);
+
+const styles = StyleSheet.create({
+  syringe: {
+    position: 'absolute',
+    bottom: 0,
+    width: 40,
+    height: 40,
+    backgroundColor: 'gray'
+  }
+});
+
+export default Syringe;
+Update App.js to include it:
+javascript
+import Syringe from './src/components/Syringe';
+
+// Inside GameEngine entities:
+entities={{
+  syringe: { position: [150, 600], renderer: <Syringe /> }
+}}
+Run the Project:
+Ensure Replit’s Expo environment starts the dev server with npx expo start.
+
+Test on Replit’s mobile preview or connect via Expo Go on a physical device.
+Notes
+Use 2D sprites with scaling (e.g., width: size, height: size) to simulate depth for approaching nurses.
+
+Later, add touch systems for sliding the syringe and slingshot shooting, plus nurse movement and obstacle logic.
+
+Store placeholder assets in src/assets/ (e.g., download free sprites from OpenGameArt.org if needed).
+Explanation
+Expo Starter: Leverages Replit’s pre-configured Expo app to save setup time.
+
+Dependencies: Includes RNGE for the game engine, gesture handling for touch, and dev-client for native module support.
+
+Development Build: Necessary because RNGE isn’t fully compatible with Expo’s managed workflow.
+
+Structure: Organized for scalability—components for entities, systems for logic, assets for visuals.
+
+Initial Component: Starts with the syringe to establish the player’s weapon, which you can expand with touch controls and shooting.
+
