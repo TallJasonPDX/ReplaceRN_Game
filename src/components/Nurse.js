@@ -15,3 +15,19 @@ const styles = StyleSheet.create({
 });
 
 export default Nurse;
+import React from 'react';
+import { View, StyleSheet } from 'react-native';
+
+const Nurse = ({ size }) => {
+  return <View style={[styles.nurse, { width: size, height: size }]} />;
+};
+
+const styles = StyleSheet.create({
+  nurse: {
+    backgroundColor: 'red',
+    position: 'absolute',
+    borderRadius: 20,
+  }
+});
+
+export default Nurse;

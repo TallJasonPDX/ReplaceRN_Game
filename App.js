@@ -7,13 +7,13 @@ import { GameEngine } from 'react-native-game-engine';
 // Components
 import Syringe from './src/components/Syringe';
 import Nurse from './src/components/Nurse';
-import Bullet from './src/components/Bullet';
 import Obstacle from './src/components/Obstacle';
 
 // Systems
 import MoveNurses from './src/systems/MoveNurses';
 import ShootSystem from './src/systems/ShootSystem';
 import TouchControls from './src/systems/TouchControls';
+import MoveObstacles from './src/systems/MoveObstacles';
 
 const { width, height } = Dimensions.get('window');
 
@@ -43,7 +43,6 @@ export default function App() {
             position: [nurseX, 20],
             size: 20,
             speed: 50,
-            growthRate: 10,
             renderer: <Nurse />
           }});
         }
@@ -53,9 +52,40 @@ export default function App() {
     }
   }, [running, gameEngine]);
 
+  // Spawn patients crossing the hallway
+  useEffect(() => {
+    if (running) {
+      const patientInterval = setInterval(() => {
+        if (gameEngine && running) {
+          const patientId = `patient-${Date.now()}`;
+          gameEngine.dispatch({
+            type: 'add-entity',
+            entity: {
+              id: patientId,
+              position: [-50, height / 2 + Math.random() * 200 - 100],
+              width: 40,
+              height: 40,
+              speed: 50,
+              renderer: <Obstacle />
+            },
+          });
+        }
+      }, 5000);
+      
+      return () => clearInterval(patientInterval);
+    }
+  }, [running, gameEngine]);
+
   // Define initial entities
   const getEntities = () => {
     return {
+      game: {
+        dispatch: (action) => {
+          if (gameEngine) {
+            gameEngine.dispatch(action);
+          }
+        }
+      },
       syringe: { 
         position: [width / 2 - 20, height - 60], 
         renderer: <Syringe /> 
@@ -65,13 +95,13 @@ export default function App() {
         position: [width / 4, height / 2], 
         width: 50, 
         height: 80,
-        renderer: <Obstacle />
+        renderer: <Obstacle width={50} height={80} />
       },
       obstacle2: { 
         position: [3 * width / 4 - 50, height / 2 + 100], 
         width: 50, 
         height: 80,
-        renderer: <Obstacle />
+        renderer: <Obstacle width={50} height={80} />
       },
       // Background will be a simple view for now
       background: {
@@ -98,7 +128,7 @@ export default function App() {
         ref={(ref) => { setGameEngine(ref) }}
         style={styles.game}
         entities={getEntities()}
-        systems={[MoveNurses, ShootSystem, TouchControls]}
+        systems={[MoveNurses, ShootSystem, TouchControls, MoveObstacles]}
         running={running}
         onEvent={onEvent}
       />
