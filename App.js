@@ -24,7 +24,12 @@ import ShootSystem from "./src/systems/ShootSystem";
 import TouchControls from "./src/systems/TouchControls";
 import MoveObstacles from "./src/systems/MoveObstacles";
 
-const { width, height } = Dimensions.get("window");
+const window = Dimensions.get("window");
+const STANDARD_WIDTH = 1320;
+const STANDARD_HEIGHT = 2868;
+const width = window.width;
+const height = window.height;
+const scale = Math.min(width / STANDARD_WIDTH, height / STANDARD_HEIGHT);
 
 function App() {
   const [gameEngine, setGameEngine] = useState(null);
@@ -41,14 +46,14 @@ function App() {
     if (running && gameEngine) {
       const interval = setInterval(() => {
         const nurseId = `nurse-${Date.now()}`;
-        const nurseX = Math.floor(Math.random() * (width - 40));
+        const nurseX = Math.floor(Math.random() * (STANDARD_WIDTH - 40) * scale);
         gameEngine.dispatch({
           type: "add-entity",
           entity: {
             id: nurseId,
-            position: [nurseX, 20],
-            size: 20,
-            speed: 50,
+            position: [nurseX, 20 * scale],
+            size: 20 * scale,
+            speed: 50 * scale,
             renderer: <Nurse />,
           },
         });
@@ -65,11 +70,11 @@ function App() {
           type: "add-entity",
           entity: {
             id: patientId,
-            position: [-50, height / 2 + Math.random() * 200 - 100],
-            width: 40,
-            height: 40,
-            speed: 50,
-            renderer: <Obstacle width={40} height={40} />,
+            position: [-50 * scale, (STANDARD_HEIGHT / 2 + Math.random() * 200 - 100) * scale],
+            width: 40 * scale,
+            height: 40 * scale,
+            speed: 50 * scale,
+            renderer: <Obstacle width={40 * scale} height={40 * scale} />,
           },
         });
       }, 5000);
@@ -77,14 +82,18 @@ function App() {
     }
   }, [running, gameEngine]);
 
+  const scalePosition = (x, y) => {
+    return [x * scale, y * scale];
+  };
+
   const getEntities = () => ({
-    game: { dispatch: (action) => gameEngine?.dispatch(action) },
-    syringe: { position: [width / 2 - 20, height - 60], renderer: <Syringe /> },
+    game: { dispatch: (action) => gameEngine?.dispatch(action), scale },
+    syringe: { position: scalePosition(STANDARD_WIDTH / 2 - 20, STANDARD_HEIGHT - 60), renderer: <Syringe /> },
     background: {
       position: [0, 0],
       width,
       height,
-      renderer: <Image source={require('./src/assets/hallway.png')} style={[styles.background, { zIndex: 0 }]} />,
+      renderer: <Image source={require('./src/assets/hallway.jpg')} style={[styles.background, { zIndex: 0 }]} />,
     },
   });
 
@@ -141,8 +150,8 @@ const styles = StyleSheet.create({
     right: 0,
     bottom: 0,
     width: "100%",
-    height: "100%",
-    resizeMode: "cover",
+    height: "auto",
+    resizeMode: "stretch",
   },
   scoreContainer: { position: "absolute", top: 40, right: 20, zIndex: 10 },
   score: { fontSize: 24, fontWeight: "bold", color: "black" },

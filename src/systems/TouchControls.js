@@ -1,10 +1,13 @@
 import { Dimensions } from "react-native";
 import Bullet from "../components/Bullet";
 
-const { width, height } = Dimensions.get("window");
+const window = Dimensions.get("window");
+const width = window.width;
+const height = window.height;
 
 const TouchControls = (entities, { dispatch }) => {
   const syringe = entities.syringe;
+  const scale = entities.game?.scale || 1;
   let pullBack = 0;
 
   return {
@@ -12,7 +15,7 @@ const TouchControls = (entities, { dispatch }) => {
       const { translationX } = event;
       syringe.position[0] = Math.max(
         0,
-        Math.min(translationX + width / 2 - 20, width - 40),
+        Math.min(translationX + width / 2 - 20 * scale, width - 40 * scale),
       );
     },
     onShoot: (event) => {
@@ -30,8 +33,8 @@ const TouchControls = (entities, { dispatch }) => {
           type: "add-entity",
           entity: {
             id: bulletId,
-            position: [syringe.position[0] + 15, syringe.position[1]],
-            speed: pullBack / 10,
+            position: [syringe.position[0] + 15 * scale, syringe.position[1]],
+            speed: (pullBack / 10) * scale,
             renderer: <Bullet />,
           },
         });
