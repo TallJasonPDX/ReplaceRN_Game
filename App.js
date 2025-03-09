@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
   StatusBar,
   AppRegistry,
+  Image,
 } from "react-native";
 import {
   GestureHandlerRootView,
@@ -79,23 +80,11 @@ function App() {
   const getEntities = () => ({
     game: { dispatch: (action) => gameEngine?.dispatch(action) },
     syringe: { position: [width / 2 - 20, height - 60], renderer: <Syringe /> },
-    obstacle1: {
-      position: [width / 4, height / 2],
-      width: 50,
-      height: 80,
-      renderer: <Obstacle width={50} height={80} />,
-    },
-    obstacle2: {
-      position: [(3 * width) / 4 - 50, height / 2 + 100],
-      width: 50,
-      height: 80,
-      renderer: <Obstacle width={50} height={80} />,
-    },
     background: {
       position: [0, 0],
       width,
       height,
-      renderer: <View style={[styles.background, { zIndex: 0 }]} />,
+      renderer: <Image source={require('./src/assets/hallway.png')} style={[styles.background, { zIndex: 0 }]} />,
     },
   });
 
@@ -151,7 +140,9 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     bottom: 0,
-    backgroundColor: "#e0e0e0",
+    width: "100%",
+    height: "100%",
+    resizeMode: "cover",
   },
   scoreContainer: { position: "absolute", top: 40, right: 20, zIndex: 10 },
   score: { fontSize: 24, fontWeight: "bold", color: "black" },
